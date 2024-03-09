@@ -93,15 +93,26 @@ class ModelRunner:
           self.dist.all_reduce(param.grad.data, op=self.dist.reduce_op.SUM)
           param.grad.data /= size
 
-    def batch_train(self, input_: torch.Tensor, input_mask: torch.Tensor,
-                    labels: torch.Tensor, labels_mask: torch.Tensor, pad_token_id: int = 3):
+    def batch_train(self, input_: Union[torch.Tensor, None] = None, input_mask: Union[torch.Tensor, None] = None,
+                    labels: Union[torch.Tensor, None] = None, labels_mask: Union[torch.Tensor, None] = None, pad_token_id: int = 3,
+                    data: Union[dict, None] = None):
+        
+        assert not input_ is None and not input_mask is None and not labels is None and not labels_mask is None or\
+          not data is None and self.hugging_face
+        
         if self.hugging_face: # Nous allons utilise un modèle text to text de hugging face (but only for fine-tuning)
           
           # concatenate the input and the label 
           
           # effectuons un passage vers l'avant
-          outputs = self.model(input_ids = input_, attention_mask = input_mask, 
-                               labels = labels)
+          if data is None:
+            
+            outputs = self.model(input_ids = input_, attention_mask = input_mask, 
+                                labels = labels)
+          
+          else:
+            
+            outputs = self.model(**data)
           
           # recuperate the predictions and the loss
           preds, loss = outputs.logits, outputs.loss
@@ -142,14 +153,25 @@ class ModelRunner:
 
         return preds, loss
 
-    def batch_eval(self, input_: torch.Tensor, input_mask: torch.Tensor,
-                    labels: torch.Tensor, labels_mask: torch.Tensor, pad_token_id: int = 3):
+    def batch_eval(self, input_: Union[torch.Tensor, None] = None, input_mask: Union[torch.Tensor, None] = None,
+                    labels: Union[torch.Tensor, None] = None, labels_mask: Union[torch.Tensor, None] = None, pad_token_id: int = 3,
+                    data: Union[dict, None] = None):
 
+        assert not input_ is None and not input_mask is None and not labels is None and not labels_mask is None or\
+          not data is None and self.hugging_face
+        
         if self.hugging_face: # Nous allons utilise un modèle text to text de hugging face (but only for fine-tuning)
 
           # effectuons un passage vers l'avant
-          outputs = self.model(input_ids = input_, attention_mask = input_mask, 
-                               labels = labels)
+          if data is None:
+            
+            outputs = self.model(input_ids = input_, attention_mask = input_mask, 
+                                labels = labels)
+          
+          else:
+            
+            outputs = self.model(**data)
+            
           # recuperate the predictions and the loss
           preds, loss = outputs.logits, outputs.loss
         
@@ -237,9 +259,9 @@ class ModelRunner:
           
           if not sampler is None:
 
-            sampler = DistributedSampler(train_loader_kwargs[sampler])
+            sampler_ = DistributedSampler(train_loader_kwargs[sampler])
 
-            distributed_sampler = sampler
+            distributed_sampler = sampler_
 
             train_loader_kwargs[sampler] = distributed_sampler
           
@@ -416,50 +438,70 @@ class ModelRunner:
                         
                         # data = loader[i]
 
-                        input_ = data[0].to(self.device)
-                        
-                        # let us initialize a fake input
-                        # input__ = None
-                        
-                        input_mask = data[1].to(self.device, dtype = torch.bool)
-
-                        # let us initialize a fake input mask
-                        # input_mask_ = None
-
-                        labels = data[2].to(self.device)
-
-                        if self.hugging_face:
+                        if isinstance(data, dict):
                           
-                          # concatenate the input with the labels and the two attention masks if we only use a decoder
-                          # if self.decoder_only:
-                              
-                          #     # let us modify the fake input to the first sentence
-                          #     input__ = copy.deepcopy(input_)
-
-                          #     input_ = torch.concat((input_, labels), dim=1)
-                              
-                          #     # the new labels are equal to the inputs
-                          #     labels = copy.deepcopy(input_)
-                              
-                          #     # let us modify the fake input mask to mask of the first sentence
-                          #     input_mask_ = copy.deepcopy(input_mask)
-
-                          #     input_mask = torch.concat((input_mask, data[3].to(self.device)), dim=1)
+                          input_ = data['input_ids'].long().to(self.device)
                           
-                          labels[labels == self.tokenizer.pad_token_id] == -100
+                          input_mask = data['input_mask'].to(self.device, dtype = torch.bool)
 
-                        labels_mask = data[3].to(self.device, dtype = torch.bool)
-                        
-                        # Récupération de identifiant token du padding (par défaut = 3)
-                        pad_token_id = 3 if self.tokenizer is None else self.tokenizer.pad_token_id
+                          labels = data['labels'].to(self.device)
 
-                        preds, loss = (
-                            self.batch_train(input_, input_mask,
-                             labels, labels_mask, pad_token_id)
-                            if mode == "train"
-                            else self.batch_eval(input_, input_mask,
-                             labels, labels_mask, pad_token_id)
-                        )
+                          if self.hugging_face:
+                            
+                            labels[labels == self.tokenizer.pad_token_id] == -100
+
+                          preds, loss = (
+                              self.batch_train(data = data)
+                              if mode == "train"
+                              else self.batch_eval(data = data)
+                          )
+                          
+                        else:
+                          
+                          input_ = data[0].long().to(self.device)
+                          
+                          # let us initialize a fake input
+                          # input__ = None
+                          
+                          input_mask = data[1].to(self.device, dtype = torch.bool)
+
+                          # let us initialize a fake input mask
+                          # input_mask_ = None
+
+                          labels = data[2].to(self.device)
+
+                          if self.hugging_face:
+                            
+                            # concatenate the input with the labels and the two attention masks if we only use a decoder
+                            # if self.decoder_only:
+                                
+                            #     # let us modify the fake input to the first sentence
+                            #     input__ = copy.deepcopy(input_)
+
+                            #     input_ = torch.concat((input_, labels), dim=1)
+                                
+                            #     # the new labels are equal to the inputs
+                            #     labels = copy.deepcopy(input_)
+                                
+                            #     # let us modify the fake input mask to mask of the first sentence
+                            #     input_mask_ = copy.deepcopy(input_mask)
+
+                            #     input_mask = torch.concat((input_mask, data[3].to(self.device)), dim=1)
+                            
+                            labels[labels == self.tokenizer.pad_token_id] == -100
+
+                          labels_mask = data[3].to(self.device, dtype = torch.bool)
+                          
+                          # Récupération de identifiant token du padding (par défaut = 3)
+                          pad_token_id = 3 if self.tokenizer is None else self.tokenizer.pad_token_id
+
+                          preds, loss = (
+                              self.batch_train(input_, input_mask,
+                              labels, labels_mask, pad_token_id)
+                              if mode == "train"
+                              else self.batch_eval(input_, input_mask,
+                              labels, labels_mask, pad_token_id)
+                          )
                         
                         # let us calculate the weight of the batch
                         batch_weight = labels.shape[0] / len(dataset)
@@ -718,25 +760,41 @@ class ModelRunner:
                     pbar.set_description(f"Evaluation batch number {i + 1}")
                     
                     # data = test_loader[i]
+                    
+                    if isinstance(data, dict):
+                          
+                      input_ = data['input_ids'].long().to(self.device)
+                      
+                      input_mask = data['input_mask'].to(self.device, dtype = torch.bool)
+
+                      labels = data['labels'].to(self.device)
+
+                      if self.hugging_face:
+                        
+                        labels[labels == self.tokenizer.pad_token_id] == -100
+
+                      preds, loss = self.batch_eval(data = data)
+                          
+                    else:
                                 
-                    input_ = data[0].long().to(self.device)
-                        
-                    input_mask = data[1].to(self.device)
+                      input_ = data[0].long().to(self.device)
+                          
+                      input_mask = data[1].to(self.device)
 
-                    labels = data[2].long().to(self.device)
+                      labels = data[2].long().to(self.device)
 
-                    if self.hugging_face:
-                        
-                        # concatenate the input with the labels and the two attention masks if we only use a decoder
-                        # if self.decoder_only:
-                            
-                        #     labels = torch.concat((input_, labels))
-                        
-                        labels[labels == test_dataset.tokenizer.pad_token_id] == -100
+                      if self.hugging_face:
+                          
+                          # concatenate the input with the labels and the two attention masks if we only use a decoder
+                          # if self.decoder_only:
+                              
+                          #     labels = torch.concat((input_, labels))
+                          
+                          labels[labels == test_dataset.tokenizer.pad_token_id] == -100
 
-                    labels_mask = data[3].to(self.device)
+                      labels_mask = data[3].to(self.device)
 
-                    preds, loss = self.batch_eval(input_, input_mask, labels, labels_mask, test_dataset.tokenizer.pad_token_id)
+                      preds, loss = self.batch_eval(input_, input_mask, labels, labels_mask, test_dataset.tokenizer.pad_token_id)
 
                     # let us calculate the weight of the batch
                     batch_weight = labels.shape[0] / len(test_dataset)

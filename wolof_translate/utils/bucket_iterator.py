@@ -1,12 +1,13 @@
 
 import torch
 import numpy as np
+from typing import *
 from torch.utils.data import Sampler
 from torch.nn.utils.rnn import pad_sequence
 from math import ceil
 
 class SequenceLengthBatchSampler(Sampler):
-    def __init__(self, dataset, boundaries, batch_sizes):
+    def __init__(self, dataset, boundaries, batch_sizes, input_key: Union[str, None] = None, label_key: Union[str, None] = None):
         self.dataset = dataset
         self.boundaries = boundaries
         self.batch_sizes = batch_sizes
@@ -14,9 +15,10 @@ class SequenceLengthBatchSampler(Sampler):
 
         # Initialize dictionary with indices and element lengths
         for i, data in enumerate(dataset):
-            length = max(len(data[0]), len(data[2]))
+            length = max(len(data[0]), len(data[2])) if (input_key is None and label_key is None) else\
+                max(len(data[input_key]), len(data[label_key]))
             self.data_info[i] = {"index": i, "length": length}
-
+            
         self.calculate_length()
 
     def calculate_length(self):
