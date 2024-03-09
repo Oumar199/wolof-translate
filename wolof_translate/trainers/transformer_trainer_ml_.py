@@ -111,8 +111,11 @@ class ModelRunner:
                                 labels = labels)
           
           else:
-            
-            outputs = self.model(**data)
+            try:
+              outputs = self.model(**data)
+            except:
+              
+              print(torch.max(data['input_ids']))
           
           # recuperate the predictions and the loss
           preds, loss = outputs.logits, outputs.loss
