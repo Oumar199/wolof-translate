@@ -3,7 +3,7 @@ from wolof_translate import *
 def recuperate_datasets(char_p: float, word_p: float, max_len: int, end_mark: int, tokenizer: T5TokenizerFast,
                         corpus_1: str = 'french', corpus_2: str = 'wolof', 
                         train_file: str = 'data/extractions/new_data/train_set.csv', 
-                        test_file: str = 'data/extractions/new_data/test_file.csv', augmenter = partial(nac.KeyboardAug)):
+                        test_file: str = 'data/extractions/new_data/test_file.csv', augmenter = partial(nac.RandomCharAug, action = 'swap')):
 
   # Let us recuperate the end_mark adding option
   if end_mark == 1:

@@ -8,7 +8,7 @@ def recuperate_datasets(char_p: float, word_p: float, max_len: int, end_mark: in
   # Let us recuperate the end_mark adding option
   if end_mark == 1:
     # Create augmentation to add on French sentences
-    fr_augmentation_1 = TransformerSequences(nac.KeyboardAug(aug_char_p=char_p, aug_word_p=word_p,
+    fr_augmentation_1 = TransformerSequences(nac.RandomCharAug(action = 'swap', aug_char_p=char_p, aug_word_p=word_p,
                                                              aug_word_max = max_len),
                                           remove_mark_space, delete_guillemet_space, add_mark_space)
 
@@ -33,7 +33,7 @@ def recuperate_datasets(char_p: float, word_p: float, max_len: int, end_mark: in
         raise ValueError(f'No end mark number {end_mark}')
 
     # Create augmentation to add on French sentences
-    fr_augmentation_1 = TransformerSequences(nac.KeyboardAug(aug_char_p=char_p, aug_word_p=word_p,
+    fr_augmentation_1 = TransformerSequences(nac.RandomCharAug(action = 'swap', aug_char_p=char_p, aug_word_p=word_p,
                                                              aug_word_max = max_len),
                                           remove_mark_space, delete_guillemet_space, add_mark_space, end_mark_fn)
     

@@ -442,7 +442,7 @@ class ModelRunner:
                           
                           input_ = data['input_ids'].long().to(self.device)
                           
-                          input_mask = data['input_mask'].to(self.device, dtype = torch.bool)
+                          input_mask = data['attention_mask'].to(self.device, dtype = torch.bool)
 
                           labels = data['labels'].to(self.device)
 
@@ -765,7 +765,7 @@ class ModelRunner:
                           
                       input_ = data['input_ids'].long().to(self.device)
                       
-                      input_mask = data['input_mask'].to(self.device, dtype = torch.bool)
+                      input_mask = data['attention_mask'].to(self.device, dtype = torch.bool)
 
                       labels = data['labels'].to(self.device)
 
