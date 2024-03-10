@@ -7,7 +7,7 @@ from torch.nn.utils.rnn import pad_sequence
 from math import ceil
 
 class SequenceLengthBatchSampler(Sampler):
-    def __init__(self, dataset, boundaries, batch_sizes, input_key = None, label_key = None, drop_unique = False):
+    def __init__(self, dataset, boundaries, batch_sizes, input_key = None, label_key = None, drop_unique = True):
         self.dataset = dataset
         self.boundaries = boundaries
         self.batch_sizes = batch_sizes
