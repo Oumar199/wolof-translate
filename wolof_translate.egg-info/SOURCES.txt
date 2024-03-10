@@ -3,6 +3,7 @@ wolof_translate/__init__.py
 wolof_translate.egg-info/PKG-INFO
 wolof_translate.egg-info/SOURCES.txt
 wolof_translate.egg-info/dependency_links.txt
+wolof_translate.egg-info/requires.txt
 wolof_translate.egg-info/top_level.txt
 wolof_translate/__pycache__/__init__.cpython-310.pyc
 wolof_translate/__pycache__/__init__.cpython-311.pyc
@@ -106,10 +107,12 @@ wolof_translate/utils/sent_unification.py
 wolof_translate/utils/split_with_valid.py
 wolof_translate/utils/tokenize_text.py
 wolof_translate/utils/training.py
+wolof_translate/utils/trunc_hg_training.py
 wolof_translate/utils/__pycache__/__init__.cpython-310.pyc
 wolof_translate/utils/__pycache__/__init__.cpython-311.pyc
 wolof_translate/utils/__pycache__/bucket_iterator.cpython-310.pyc
 wolof_translate/utils/__pycache__/database_manager.cpython-310.pyc
+wolof_translate/utils/__pycache__/display_predictions.cpython-310.pyc
 wolof_translate/utils/__pycache__/download_model.cpython-310.pyc
 wolof_translate/utils/__pycache__/evaluate_custom.cpython-310.pyc
 wolof_translate/utils/__pycache__/evaluation.cpython-310.pyc

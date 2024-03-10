@@ -111,11 +111,8 @@ class ModelRunner:
                                 labels = labels)
           
           else:
-            try:
+            
               outputs = self.model(**data)
-            except:
-              
-              print(torch.max(data['input_ids']))
           
           # recuperate the predictions and the loss
           preds, loss = outputs.logits, outputs.loss
@@ -453,6 +450,11 @@ class ModelRunner:
                             
                             labels[labels == self.tokenizer.pad_token_id] == -100
 
+                          # if i == 76:
+                            
+                          #   print(torch.max(data['input_ids']))
+                          #   print(data['input_ids'].shape)
+                            
                           preds, loss = (
                               self.batch_train(data = data)
                               if mode == "train"

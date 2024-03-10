@@ -4,6 +4,3 @@ Version: 0.0.1
 Summary: Contain function and classes to process corpora for making translation between wolof text and other languages.
 Author: Oumar Kane
 Author-email: oumar.kane@univ-thies.sn
-Requires: spacy
-Requires: nltk
-Requires: gensim
