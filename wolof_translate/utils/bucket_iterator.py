@@ -76,13 +76,15 @@ class SequenceLengthBatchSampler(Sampler):
 
 
 class BucketSampler(Sampler):
-    def __init__(self, dataset, batch_size, sort_key=lambda x: max(len(x[0]), len(x[1]))):
+    def __init__(self, dataset, batch_size, sort_key=lambda x, index_1, index_2: max(len(x[index_1]), len(x[index_2])), input_key: Union[str, int] = 0, label_key: Union[str, int] = 1):
         self.dataset = dataset
         self.batch_size = batch_size
         self.sort_key = sort_key
+        self.index_1 = input_key
+        self.index_2 = label_key
 
     def __iter__(self):
-        indices = np.argsort([self.sort_key(self.dataset[i]) for i in range(len(self.dataset))])
+        indices = np.argsort([self.sort_key(self.dataset[i], self.index_1, self.index_2) for i in range(len(self.dataset))])
         batches = [indices[i:i + self.batch_size] for i in range(0, len(indices), self.batch_size)]
         if self.batch_size > 1:
             np.random.shuffle(batches)
@@ -133,7 +135,5 @@ def collate_fn_trunc(batch, max_len, eos_token_id, pad_token_id):
 
     # Pad the labels masks to have the same length
     padded_target_masks = pad_sequence(target_masks, batch_first=True)[:,:max_len]
-    
-    print(padded_input_seqs.shape, padded_input_masks.shape, padded_target_seqs.shape, padded_target_masks.shape)
 
     return padded_input_seqs, padded_input_masks, padded_target_seqs, padded_target_masks
