@@ -89,7 +89,7 @@ class BucketSampler(Sampler):
     def __iter__(self):
         if self.batch_size > 1:
             np.random.shuffle(self.batches)
-        for batch in batches:
+        for batch in self.batches:
             yield batch.tolist()
 
     def __len__(self):
