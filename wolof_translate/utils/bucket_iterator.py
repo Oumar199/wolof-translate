@@ -82,12 +82,13 @@ class BucketSampler(Sampler):
         self.sort_key = sort_key
         self.index_1 = input_key
         self.index_2 = label_key
+        indices = np.argsort([self.sort_key(self.dataset[i], self.index_1, self.index_2) for i in range(len(self.dataset))])
+        self.batches = [indices[i:i + self.batch_size] for i in range(0, len(indices), self.batch_size)]
+        
 
     def __iter__(self):
-        indices = np.argsort([self.sort_key(self.dataset[i], self.index_1, self.index_2) for i in range(len(self.dataset))])
-        batches = [indices[i:i + self.batch_size] for i in range(0, len(indices), self.batch_size)]
         if self.batch_size > 1:
-            np.random.shuffle(batches)
+            np.random.shuffle(self.batches)
         for batch in batches:
             yield batch.tolist()
 
