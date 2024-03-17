@@ -307,7 +307,7 @@ class ModelRunner:
         self.logging_dir = logging_dir
         
         # Initialize the metrics
-        # self.metrics = {}
+        self.metrics = {}
 
         # Initialize the attribute which indicate if the model is from huggingface
         self.hugging_face = hugging_face
