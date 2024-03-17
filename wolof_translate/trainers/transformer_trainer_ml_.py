@@ -307,7 +307,7 @@ class ModelRunner:
         self.logging_dir = logging_dir
         
         # Initialize the metrics
-        self.metrics = {}
+        # self.metrics = {}
 
         # Initialize the attribute which indicate if the model is from huggingface
         self.hugging_face = hugging_face
@@ -404,10 +404,10 @@ class ModelRunner:
                     self.metrics[f'{mode}_loss'] = 0
 
                     # Let us initialize the predictions
-                    predictions_ = []
+                    # predictions_ = []
 
-                    # Let us initialize the labels
-                    labels_ = []
+                    # # Let us initialize the labels
+                    # labels_ = []
 
                     if mode == "train":
 
@@ -750,7 +750,7 @@ class ModelRunner:
         
         metrics = {'test_loss': 0.0}
 
-        results = {'original_sentences': [], 'translations': [], 'predictions': []}
+        results = {'Source References': [], 'Target Translations': [], 'Predictions': []}
 
         # progress_bar = trange(len(test_loader))
         
@@ -835,11 +835,11 @@ class ModelRunner:
                     # predictions_.extend(preds.detach().cpu().tolist())
                     
                     # let us recuperate the original sentences
-                    results['original_sentences'].extend(test_dataset.decode(input_))
+                    results['Source References'].extend(test_dataset.decode(input_))
 
-                    results['translations'].extend(test_dataset.decode(labels))
+                    results['Target Translations'].extend(test_dataset.decode(labels))
 
-                    results['predictions'].extend(test_dataset.decode(preds))
+                    results['Predictions'].extend(test_dataset.decode(preds))
 
                     pbar.update()
                     
