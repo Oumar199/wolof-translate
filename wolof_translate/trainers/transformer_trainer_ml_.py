@@ -524,6 +524,7 @@ class ModelRunner:
                                   #  attention_mask = input_mask if not self.decoder_only else input_mask_,
                                   #   max_new_tokens = self.train_set.max_len, pad_token_id = self.test_set.tokenizer.eos_token_id)
                                   preds = self.model.module.generate(input_, attention_mask = input_mask, max_length = labels.shape[1])
+                                  print(preds.shape)
 
                               else:
 
