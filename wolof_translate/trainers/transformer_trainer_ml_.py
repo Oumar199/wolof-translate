@@ -126,7 +126,7 @@ class ModelRunner:
           preds, loss = outputs['preds'], outputs['loss']
 
         # effectuons un passage vers l'arrière
-        loss.backward()
+        loss.mean().backward()
 
         # average the gradients if the training is distributed over multi machine cpu
         if self.distributed and not self.device == torch.device('cuda'):

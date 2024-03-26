@@ -35,11 +35,11 @@ def display_samples(data_frame: pd.DataFrame,
     
     if lang == 'fr':
         
-        samples.columns = ['Phrases originales', 'Traductions', 'Prédictions']
+        samples.columns = ['Phrases Originales', 'Target Sentences', 'Prédictions']
     
     elif lang == 'eng':
         
-        samples.columns = ['Original sentences', 'Translations', 'Predictions']
+        samples.columns = ['Source Sentences', 'Target Sentences', 'Predictions']
     
     # trace the figure
     fig = go.Figure(
