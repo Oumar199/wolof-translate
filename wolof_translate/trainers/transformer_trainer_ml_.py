@@ -151,7 +151,7 @@ class ModelRunner:
         # reinitialisation des gradients
         self.optimizer.zero_grad()
 
-        return preds, loss
+        return preds, loss.mean()
 
     def batch_eval(self, input_: Union[torch.Tensor, None] = None, input_mask: Union[torch.Tensor, None] = None,
                     labels: Union[torch.Tensor, None] = None, labels_mask: Union[torch.Tensor, None] = None, pad_token_id: int = 3,
@@ -183,7 +183,7 @@ class ModelRunner:
           # recuperate the predictions and the loss
           preds, loss = outputs['preds'], outputs['loss']
 
-        return preds, loss
+        return preds, loss.mean()
 
     # On a décidé d'ajouter quelques paramètres qui ont été utiles au niveau des enciennes classes d'entraînement
     def compile(
