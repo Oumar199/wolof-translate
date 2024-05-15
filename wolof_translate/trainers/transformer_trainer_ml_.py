@@ -203,7 +203,8 @@ class ModelRunner:
         logging_dir: Union[str, None] = None,
         hugging_face: bool = False,
         is_distributed: bool = False,
-        dist = None
+        dist = None,
+        loss_mask_value = -100,
     ):
 
         if self.seed:
@@ -321,6 +322,9 @@ class ModelRunner:
 
         # add early stopping
         self.epochs_since_improvement = 0
+        
+        # Initialize the mask value for loss
+        self.loss_mask_value = loss_mask_value
 
     def train(
         self,
@@ -448,7 +452,7 @@ class ModelRunner:
 
                           if self.hugging_face:
                             
-                            labels[labels == self.tokenizer.pad_token_id] == -100
+                            labels[labels == self.tokenizer.pad_token_id] == self.loss_mask_value
 
                           # if i == 76:
                             
@@ -493,7 +497,7 @@ class ModelRunner:
 
                             #     input_mask = torch.concat((input_mask, data[3].to(self.device)), dim=1)
                             
-                            labels[labels == self.tokenizer.pad_token_id] == -100
+                            labels[labels == self.tokenizer.pad_token_id] == self.loss_mask_value
 
                           labels_mask = data[3].to(self.device, dtype = torch.bool)
                           
@@ -776,7 +780,7 @@ class ModelRunner:
 
                       if self.hugging_face:
                         
-                        labels[labels == self.tokenizer.pad_token_id] == -100
+                        labels[labels == self.tokenizer.pad_token_id] == self.loss_mask_value
 
                       preds, loss = self.batch_eval(data = data)
                           
@@ -795,7 +799,7 @@ class ModelRunner:
                               
                           #     labels = torch.concat((input_, labels))
                           
-                          labels[labels == test_dataset.tokenizer.pad_token_id] == -100
+                          labels[labels == test_dataset.tokenizer.pad_token_id] == self.loss_mask_value
 
                       labels_mask = data[3].to(self.device)
 
