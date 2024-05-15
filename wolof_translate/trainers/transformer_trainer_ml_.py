@@ -108,18 +108,20 @@ class ModelRunner:
           if data is None:
             
             outputs = self.model(input_ids = input_, attention_mask = input_mask)
+            
+            labels = labels
           
           else:
             
-              outputs = self.model(**{key:value for key, value in data.items() if key != 'labels'})
-              
-              labels = data['labels']
+            outputs = self.model(**{key:value for key, value in data.items() if key != 'labels'})
+            
+            labels = data['labels']
           
           # recuperate the predictions and the loss
           preds = outputs.logits
           
           # calculate the loss
-          loss = self.criterion(preds, labels)
+          loss = self.criterion(preds.view(-1, preds.size(-1)), labels.view(-1, preds.size(-1)))
           
         else:
 
@@ -169,8 +171,9 @@ class ModelRunner:
           # effectuons un passage vers l'avant
           if data is None:
             
-            outputs = self.model(input_ids = input_, attention_mask = input_mask, 
-                                labels = labels)
+            outputs = self.model(input_ids = input_, attention_mask = input_mask)
+            
+            labels = labels
           
           else:
             
@@ -182,7 +185,7 @@ class ModelRunner:
           preds = outputs.logits
           
           # calculate the loss
-          loss = self.criterion(preds, labels)
+          loss = self.criterion(preds.view(-1, preds.size(-1)), labels.view(-1, preds.size(-1)))
         
         else:
           
