@@ -107,21 +107,14 @@ class ModelRunner:
           # effectuons un passage vers l'avant
           if data is None:
             
-            outputs = self.model(input_ids = input_, attention_mask = input_mask)
+            outputs = self.model(input_ids = input_, attention_mask = input_mask, labels = labels)
             
-            labels = labels
-          
           else:
             
-            outputs = self.model(**{key:value for key, value in data.items() if key != 'labels'})
-            
-            labels = data['labels']
+            outputs = self.model(**data)
           
           # recuperate the predictions and the loss
-          preds = outputs.logits
-          
-          # calculate the loss
-          loss = self.criterion(preds.view(-1, preds.size(-1)), labels.view(-1, preds.size(-1)))
+          preds = outputs.logits, outputs.loss
           
         else:
 
@@ -171,21 +164,14 @@ class ModelRunner:
           # effectuons un passage vers l'avant
           if data is None:
             
-            outputs = self.model(input_ids = input_, attention_mask = input_mask)
-            
-            labels = labels
-          
+            outputs = self.model(input_ids = input_, attention_mask = input_mask, labels = labels)
+         
           else:
             
-            outputs = self.model(**{key:value for key, value in data.items() if key != 'labels'})
-              
-            labels = data['labels']
+            outputs = self.model(**data)
           
           # recuperate the predictions and the loss
-          preds = outputs.logits
-          
-          # calculate the loss
-          loss = self.criterion(preds.view(-1, preds.size(-1)), labels.view(-1, preds.size(-1)))
+          preds, loss = outputs.logits, outputs.loss
         
         else:
           
@@ -207,7 +193,6 @@ class ModelRunner:
         test_loader_kwargs: dict = {"batch_size": 16, 'shuffle': False},
         optimizer_kwargs: dict = {"lr": 1e-4, "weight_decay": 0.4},
         model_kwargs: dict = {'class_criterion': nn.CrossEntropyLoss(label_smoothing=0.1)},
-        criterion = nn.CrossEntropyLoss(label_smoothing = 0.1),
         lr_scheduler_kwargs: dict = {'d_model': 512, 'lr_warmup_step': 100},
         lr_scheduler = None,
         stopping_patience: Union[int, None] = None,
@@ -338,9 +323,6 @@ class ModelRunner:
         
         # Initialize the mask value for loss
         self.loss_mask_value = loss_mask_value
-        
-        # Initialize the loss function
-        self.criterion = criterion
 
     def train(
         self,
