@@ -15,6 +15,8 @@ class TranslationEvaluation:
         self.decoder = decoder
 
         self.bleu = evaluate.load('sacrebleu')
+        
+        self.rouge = evaluate.load('rouge')
 
         self.accuracy = evaluate.load('accuracy')
 
@@ -36,7 +38,8 @@ class TranslationEvaluation:
 
       return preds, labels, label_weights
 
-    def compute_metrics(self, eval_preds, bleu: bool = True, accuracy: bool = False):
+    def compute_metrics(self, eval_preds, rouge: bool = True,
+                        bleu: bool = True, accuracy: bool = False):
 
         preds, labels = eval_preds
 
@@ -66,11 +69,19 @@ class TranslationEvaluation:
           bleu_result = self.bleu.compute(predictions=decoded_preds, references=decoded_labels)
 
           result['bleu'] = bleu_result["score"]
+          
+        if rouge:
 
-          prediction_lens = [np.count_nonzero(np.array(pred) != self.tokenizer.pad_token_id) for pred in preds]
+          decoded_preds, decoded_labels = self.postprocess_text(decoded_preds, decoded_labels)
 
-          result["gen_len"] = np.mean(prediction_lens)
+          rouge_result = self.rouge.compute(predictions=decoded_preds, references=decoded_labels)
 
-          result = {k: round(v, 4) for k, v in result.items()}
+          result['rouge'] = rouge_result["score"]
+
+        prediction_lens = [np.count_nonzero(np.array(pred) != self.tokenizer.pad_token_id) for pred in preds]
+
+        result["gen_len"] = np.mean(prediction_lens)
+
+        result = {k: round(v, 4) for k, v in result.items()}
 
         return result
