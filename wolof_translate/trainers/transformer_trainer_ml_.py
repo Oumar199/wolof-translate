@@ -107,16 +107,20 @@ class ModelRunner:
           # effectuons un passage vers l'avant
           if data is None:
             
-            outputs = self.model(input_ids = input_, attention_mask = input_mask, 
-                                labels = labels)
+            outputs = self.model(input_ids = input_, attention_mask = input_mask)
           
           else:
             
-              outputs = self.model(**data)
+              outputs = self.model(**{key:value for key, value in data.items() if key != 'labels'})
+              
+              labels = data['labels']
           
           # recuperate the predictions and the loss
-          preds, loss = outputs.logits, outputs.loss
-        
+          preds = outputs.logits
+          
+          # calculate the loss
+          loss = self.criterion(preds, labels)
+          
         else:
 
           # effectuons un passage vers l'avant
@@ -170,10 +174,15 @@ class ModelRunner:
           
           else:
             
-            outputs = self.model(**data)
-            
+            outputs = self.model(**{key:value for key, value in data.items() if key != 'labels'})
+              
+            labels = data['labels']
+          
           # recuperate the predictions and the loss
-          preds, loss = outputs.logits, outputs.loss
+          preds = outputs.logits
+          
+          # calculate the loss
+          loss = self.criterion(preds, labels)
         
         else:
           
@@ -195,6 +204,7 @@ class ModelRunner:
         test_loader_kwargs: dict = {"batch_size": 16, 'shuffle': False},
         optimizer_kwargs: dict = {"lr": 1e-4, "weight_decay": 0.4},
         model_kwargs: dict = {'class_criterion': nn.CrossEntropyLoss(label_smoothing=0.1)},
+        criterion = nn.CrossEntropyLoss(label_smoothing = 0.1),
         lr_scheduler_kwargs: dict = {'d_model': 512, 'lr_warmup_step': 100},
         lr_scheduler = None,
         stopping_patience: Union[int, None] = None,
@@ -325,6 +335,9 @@ class ModelRunner:
         
         # Initialize the mask value for loss
         self.loss_mask_value = loss_mask_value
+        
+        # Initialize the loss function
+        self.criterion = criterion
 
     def train(
         self,
