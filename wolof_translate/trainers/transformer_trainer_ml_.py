@@ -3,6 +3,7 @@ Nous allons créer des classes supplémentaire qui vont supporter la classe d'en
 """
 
 # from wolof_translate.utils.evaluation import TranslationEvaluation
+from wolof_translate.utils.evaluate_custom import TranslationEvaluation
 from torch.utils.data.distributed import DistributedSampler
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import Dataset, DataLoader
