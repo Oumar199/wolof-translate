@@ -25,29 +25,37 @@ class TranslationEvaluation:
 
     def postprocess_text(self, preds, labels):
       
-      for i in range(len(preds)):
+      for i in range(len(labels)):
         
-        preds[i] = preds[i].strip()
-
+        pred = preds[i].strip()
+        
         label = labels[i].strip()
         
         if self.next_gen:
           
+          new_pred = ''
+            
           new_label = ''
           
-          for j in len(preds[i]):
+          for j in range(len(labels[i])):
             
-            if label[:j] != preds[i][:j]: 
+            if pred[:j] != labels[i][:j]: 
               
+              new_pred = pred[j:]
+                
               new_label = label[j:]
               
               break
           
-          labels[i] = [new_label]
+          preds[i] = new_pred
+          
+          labels[i] = new_label
         
         else:
-          
-          labels[i] = [label] 
+            
+          preds[i] = pred
+        
+          labels[i] = [label]
 
       return preds, labels
 
@@ -88,7 +96,9 @@ class TranslationEvaluation:
         if bleu or rouge:
 
           decoded_preds, decoded_labels = self.postprocess_text(decoded_preds, decoded_labels)
-
+        
+        print(decoded_preds)
+        print(decoded_labels)
         if bleu:
           
           bleu_result = self.bleu.compute(predictions=decoded_preds, references=decoded_labels)
