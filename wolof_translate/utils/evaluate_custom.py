@@ -62,18 +62,18 @@ class TranslationEvaluation:
 
           result['accuracy'] = accuracy_result
 
-        if bleu:
+        if bleu or rouge:
 
           decoded_preds, decoded_labels = self.postprocess_text(decoded_preds, decoded_labels)
 
+        if bleu:
+          
           bleu_result = self.bleu.compute(predictions=decoded_preds, references=decoded_labels)
 
           result['bleu'] = bleu_result["score"]
           
         if rouge:
-
-          decoded_preds, decoded_labels = self.postprocess_text(decoded_preds, decoded_labels)
-
+          
           rouge_result = self.rouge.compute(predictions=decoded_preds, references=decoded_labels)
 
           result.update(rouge_result)

@@ -21,6 +21,10 @@ class TranslationEvaluation:
 
         preds = [pred.strip() for pred in preds]
 
+        for label in labels:
+            
+            print(label)
+            
         labels = [[label.strip()] for label in labels]
 
         return preds, labels
