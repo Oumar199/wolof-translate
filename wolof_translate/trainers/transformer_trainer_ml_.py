@@ -97,8 +97,8 @@ class ModelRunner:
                     labels: Union[torch.Tensor, None] = None, labels_mask: Union[torch.Tensor, None] = None, pad_token_id: int = 3,
                     data: Union[dict, None] = None):
         
-        assert not input_ is None and not input_mask is None and not labels is None and not labels_mask is None or\
-          not data is None and self.hugging_face
+        assert (not input_ is None and not input_mask is None and not labels is None) or\
+          (not data is None and self.hugging_face)
         
         if self.hugging_face: # Nous allons utilise un modèle text to text de hugging face (but only for fine-tuning)
           
@@ -156,8 +156,8 @@ class ModelRunner:
                     labels: Union[torch.Tensor, None] = None, labels_mask: Union[torch.Tensor, None] = None, pad_token_id: int = 3,
                     data: Union[dict, None] = None):
 
-        assert not input_ is None and not input_mask is None and not labels is None and not labels_mask is None or\
-          not data is None and self.hugging_face
+        assert (not input_ is None and not input_mask is None and not labels is None) or\
+          (not data is None and self.hugging_face)
         
         if self.hugging_face: # Nous allons utilise un modèle text to text de hugging face (but only for fine-tuning)
 
