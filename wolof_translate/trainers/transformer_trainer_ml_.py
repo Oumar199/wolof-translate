@@ -535,8 +535,14 @@ class ModelRunner:
                                     input_ = data['input_ids_gen'].long().to(self.device)
                                     
                                     input_mask = data['attention_mask_gen'].to(self.device, dtype = torch.bool)
+                                    
+                                    max_new_tokens = labels.shape[1] - input_.shape[1]
                                   
-                                  preds = self.model.module.generate(input_, attention_mask = input_mask, max_length = labels.shape[1])
+                                  else:
+                                    
+                                    max_new_tokens = labels.shape[1]
+                                  
+                                  preds = self.model.module.generate(input_, attention_mask = input_mask, max_new_tokens = max_new_tokens)
 
                               else:
 
