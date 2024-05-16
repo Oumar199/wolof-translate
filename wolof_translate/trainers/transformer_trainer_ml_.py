@@ -114,7 +114,7 @@ class ModelRunner:
             outputs = self.model(**data)
           
           # recuperate the predictions and the loss
-          preds = outputs.logits, outputs.loss
+          preds, loss = outputs.logits, outputs.loss
           
         else:
 
