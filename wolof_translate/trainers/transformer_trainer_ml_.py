@@ -457,10 +457,15 @@ class ModelRunner:
                           #   print(torch.max(data['input_ids']))
                           #   print(data['input_ids'].shape)
                             
+                          # preds, loss = (
+                          #     self.batch_train(data = data)
+                          #     if mode == "train"
+                          #     else self.batch_eval(data = data)
+                          # )
                           preds, loss = (
-                              self.batch_train(data = data)
+                              self.batch_train(input_ = input_, input_mask = input_mask, labels = labels)
                               if mode == "train"
-                              else self.batch_eval(data = data)
+                              else self.batch_eval(input_ = input_, input_mask = input_mask, labels = labels)
                           )
                           
                         else:
@@ -525,7 +530,13 @@ class ModelRunner:
                                   # preds = self.model.generate(input_ if not self.decoder_only else input__,
                                   #  attention_mask = input_mask if not self.decoder_only else input_mask_,
                                   #   max_new_tokens = self.train_set.max_len, pad_token_id = self.test_set.tokenizer.eos_token_id)
-                                  preds = self.model.module.generate(input_, attention_mask = input_mask, max_length = labels.shape[1])
+                                  if isinstance(data, dict) and 'gen' in list(data.keys()):
+                                    
+                                    input_ = data['input_ids_gen'].long().to(self.device)
+                                    
+                                    input_mask = data['attention_mask_gen'].to(self.device, dtype = torch.bool)
+                                  
+                                  preds = self.model.module.generate(input_, attention_mask = input_mask, max_new_tokens = labels.shape[1])
 
                               else:
 
