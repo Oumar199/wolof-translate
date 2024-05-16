@@ -536,7 +536,7 @@ class ModelRunner:
                                     
                                     input_mask = data['attention_mask_gen'].to(self.device, dtype = torch.bool)
                                   
-                                  preds = self.model.module.generate(input_, attention_mask = input_mask, max_new_tokens = labels.shape[1])
+                                  preds = self.model.module.generate(input_, attention_mask = input_mask, max_length = labels.shape[1])
 
                               else:
 
