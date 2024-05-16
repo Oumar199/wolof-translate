@@ -76,7 +76,7 @@ class TranslationEvaluation:
 
           rouge_result = self.rouge.compute(predictions=decoded_preds, references=decoded_labels)
 
-          result['rouge'] = rouge_result["score"]
+          result.update(rouge_result)
 
         prediction_lens = [np.count_nonzero(np.array(pred) != self.tokenizer.pad_token_id) for pred in preds]
 
