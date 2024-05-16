@@ -537,7 +537,7 @@ class ModelRunner:
                                     
                                     input_mask = data['attention_mask_gen'].to(self.device, dtype = torch.bool)
                                     
-                                    max_new_tokens = labels.shape[1] - input_.shape[1]
+                                    max_new_tokens = labels.shape[1]
                                   
                                   else:
                                     

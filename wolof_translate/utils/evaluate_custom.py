@@ -8,6 +8,7 @@ class TranslationEvaluation:
     def __init__(self,
                  tokenizer: Tokenizer,
                  decoder: Union[Callable, None] = None,
+                 next_gen: bool = False,
                  ):
 
         self.tokenizer = tokenizer
@@ -19,12 +20,34 @@ class TranslationEvaluation:
         self.rouge = evaluate.load('rouge')
 
         self.accuracy = evaluate.load('accuracy')
+        
+        self.next_gen = next_gen
 
     def postprocess_text(self, preds, labels):
+      
+      for i in range(len(preds)):
+        
+        preds[i] = preds[i].strip()
 
-      preds = [pred.strip() for pred in preds]
-
-      labels = [[label.strip()] for label in labels]
+        label = labels[i].strip()
+        
+        if self.next_gen:
+          
+          new_label = ''
+          
+          for j in len(preds[i]):
+            
+            if label[:j] != preds[i][:j]: 
+              
+              new_label = label[j:]
+              
+              break
+          
+          labels[i] = [new_label]
+        
+        else:
+          
+          labels[i] = [label] 
 
       return preds, labels
 
