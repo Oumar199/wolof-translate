@@ -97,8 +97,6 @@ class TranslationEvaluation:
 
           decoded_preds, decoded_labels = self.postprocess_text(decoded_preds, decoded_labels)
         
-        print(decoded_preds)
-        print(decoded_labels)
         if bleu:
           
           bleu_result = self.bleu.compute(predictions=decoded_preds, references=decoded_labels)
