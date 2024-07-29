@@ -1,17 +1,16 @@
-
 from torch import nn
 import numpy as np
 import torch
 
-class PositionalEncoding(nn.Module):
 
+class PositionalEncoding(nn.Module):
     def __init__(self, n_poses_max: int = 500, d_model: int = 512):
-        super(PositionalEncoding, self).__init__()    
-        
+        super(PositionalEncoding, self).__init__()
+
         self.n_poses = n_poses_max
-        
+
         self.n_dims = d_model
-        
+
         # the angle is calculated as following
         angle = lambda pos, i: pos / 10000 ** (i / self.n_dims)
 
@@ -35,14 +34,13 @@ class PositionalEncoding(nn.Module):
 
         # let's calculate the circle x axis coordinates
         points[:, 1::2] = np.cos(angle(xv.T, yv.T))
-        
-        self.register_buffer('pe', torch.from_numpy(points).unsqueeze(0))
-    
+
+        self.register_buffer("pe", torch.from_numpy(points).unsqueeze(0))
+
     def forward(self, input_: torch.Tensor):
-        
+
         # let's scale the input
         input_ = input_ * torch.sqrt(torch.tensor(self.n_dims))
-        
+
         # let's recuperate the result of the sum between the input and the positional encoding vectors
-        return input_ + self.pe[:, :input_.size(1), :].type_as(input_)
-    
+        return input_ + self.pe[:, : input_.size(1), :].type_as(input_)

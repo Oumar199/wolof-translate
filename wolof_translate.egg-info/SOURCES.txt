@@ -49,6 +49,8 @@ wolof_translate/models/wolof/tfidfaug_w2idf.txt
 wolof_translate/models/wolof/tfidfaug_w2tfidf.txt
 wolof_translate/pipe/__init__.py
 wolof_translate/pipe/nlp_pipeline.py
+wolof_translate/pipe/__pycache__/__init__.cpython-310.pyc
+wolof_translate/pipe/__pycache__/nlp_pipeline.cpython-310.pyc
 wolof_translate/tokenizers/__init__.py
 wolof_translate/tokenizers/adverse_tokenizer.json
 wolof_translate/tokenizers/t5_tokenizers.zip

@@ -3,14 +3,24 @@
 """
 
 # let us import all necessary libraries
-from transformers import T5Model, T5ForConditionalGeneration, Seq2SeqTrainer, T5TokenizerFast, set_seed, AdamW, get_linear_schedule_with_warmup,\
-                          get_linear_schedule_with_warmup, get_cosine_schedule_with_warmup, get_constant_schedule_with_warmup, \
-                              Adafactor
+from transformers import (
+    T5Model,
+    T5ForConditionalGeneration,
+    Seq2SeqTrainer,
+    T5TokenizerFast,
+    set_seed,
+    AdamW,
+    get_linear_schedule_with_warmup,
+    get_linear_schedule_with_warmup,
+    get_cosine_schedule_with_warmup,
+    get_constant_schedule_with_warmup,
+    Adafactor,
+)
 from wolof_translate.utils.sent_transformers import TransformerSequences
-from wolof_translate.utils.improvements.end_marks import add_end_mark # added
+from wolof_translate.utils.improvements.end_marks import add_end_mark  # added
 from torch.nn import TransformerEncoderLayer, TransformerDecoderLayer
 from torch.utils.data import Dataset, DataLoader, random_split
-from wolof_translate.data.dataset_v4 import SentenceDataset # v2 -> v3 -> v4
+from wolof_translate.data.dataset_v4 import SentenceDataset  # v2 -> v3 -> v4
 from wolof_translate.utils.sent_corrections import *
 from sklearn.model_selection import train_test_split
 from torch.optim.lr_scheduler import _LRScheduler
@@ -46,8 +56,15 @@ import os
 
 ###-----------------------------------------------
 # Libraries imported from wolof translate
-from wolof_translate.utils.bucket_iterator import SequenceLengthBatchSampler, BucketSampler, collate_fn, collate_fn_trunc
-from wolof_translate.trainers.transformer_trainer_custom import ModelRunner as CustomModelRunner
+from wolof_translate.utils.bucket_iterator import (
+    SequenceLengthBatchSampler,
+    BucketSampler,
+    collate_fn,
+    collate_fn_trunc,
+)
+from wolof_translate.trainers.transformer_trainer_custom import (
+    ModelRunner as CustomModelRunner,
+)
 from wolof_translate.models.transformers.optimization import TransformerScheduler
 from wolof_translate.utils.recuperate_datasets import recuperate_datasets
 from wolof_translate.trainers.transformer_trainer_ml_ import ModelRunner
