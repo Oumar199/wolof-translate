@@ -1,6 +1,12 @@
 import wandb
 
-def add_directory(directory: str, artifact_name: str, project: str = 'fw_artifacts', entity: str = 'oumar-kane-team'):
+
+def add_directory(
+    directory: str,
+    artifact_name: str,
+    project: str = "fw_artifacts",
+    entity: str = "oumar-kane-team",
+):
     """Initialize a project and add checkpoints as artifact to wandb
 
     Args:
@@ -9,12 +15,12 @@ def add_directory(directory: str, artifact_name: str, project: str = 'fw_artifac
         project (str, optional): The project name. Defaults to 'fw_artifacts'.
         entity (str, optional): The entity name. Defaults to 'oumar-kane-team'.
     """
-    
+
     run = wandb.init(project=project, entity=entity)
-    
+
     # add a directory as artifact to wandb
-    artifact = wandb.Artifact(artifact_name, type='dataset')
+    artifact = wandb.Artifact(artifact_name, type="dataset")
     artifact.add_dir(directory)
     run.log_artifact(artifact)
-    
+
     wandb.finish()
