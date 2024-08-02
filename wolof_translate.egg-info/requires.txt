@@ -2,11 +2,10 @@ spacy
 nltk
 gensim
 furo
-nbsphinx
 streamlit
 tokenizers
+tensorboard
 evaluate
-torch
 transformers
 pandas
 numpy
@@ -14,7 +13,6 @@ scikit-learn
 matplotlib
 plotly
 sacrebleu
-tensorboard
 nlpaug
 wandb
 pytorch_lightning
