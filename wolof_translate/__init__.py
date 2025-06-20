@@ -9,7 +9,7 @@ from transformers import (
     Seq2SeqTrainer,
     T5TokenizerFast,
     set_seed,
-    AdamW,
+    AdamWeightDecay,
     get_linear_schedule_with_warmup,
     get_linear_schedule_with_warmup,
     get_cosine_schedule_with_warmup,
